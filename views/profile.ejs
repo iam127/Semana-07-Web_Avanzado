@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; }
+
+        nav {
+            background: #fff; border-bottom: 1px solid #e8e8e4;
+            padding: 0 2rem; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-brand { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; letter-spacing: -0.01em; }
+        .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+        .role-badge {
+            font-size: 0.75rem; font-weight: 500;
+            padding: 0.25rem 0.65rem; border-radius: 20px;
+            background: #f0f0eb; color: #555; border: 1px solid #e0e0da;
+        }
+        .role-badge.admin { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+        .logout-btn {
+            font-size: 0.82rem; font-weight: 500; color: #888;
+            background: none; border: none; cursor: pointer;
+            font-family: 'DM Sans', sans-serif; transition: color 0.15s;
+        }
+        .logout-btn:hover { color: #1a1a1a; }
+
+        .main { max-width: 700px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+        .page-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.75rem;
+        }
+        .page-header h1 { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; }
+        .back-btn {
+            font-size: 0.82rem; font-weight: 500; color: #888;
+            background: none; border: none; cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            display: flex; align-items: center; gap: 0.3rem;
+            transition: color 0.15s;
+        }
+        .back-btn:hover { color: #1a1a1a; }
+
+        .profile-card {
+            background: #fff; border: 1px solid #e8e8e4;
+            border-radius: 16px; overflow: hidden;
+            margin-bottom: 1.25rem;
+        }
+        .profile-header {
+            background: #1a1a1a; padding: 2rem;
+            display: flex; align-items: center; gap: 1.5rem;
+        }
+        .avatar {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: #333; color: #fff; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; font-weight: 600; overflow: hidden;
+            border: 2px solid #444;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .profile-header-info h2 { font-size: 1.1rem; font-weight: 600; color: #fff; }
+        .profile-header-info p { font-size: 0.85rem; color: #888; margin-top: 0.2rem; }
+        .profile-header-info .pill {
+            display: inline-block; margin-top: 0.5rem;
+            padding: 0.2rem 0.6rem; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 500;
+            background: #fff; color: #1a1a1a;
+        }
+
+        .profile-body { padding: 1.75rem 2rem; }
+
+        .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1.25rem; margin-bottom: 1.75rem;
+        }
+        .info-item label {
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.07em; color: #aaa; display: block; margin-bottom: 0.35rem;
+        }
+        .info-item span { font-size: 0.9rem; color: #1a1a1a; display: block; }
+        .info-item .mono { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: #888; }
+
+        .divider { border: none; border-top: 1px solid #f0f0eb; margin: 0 0 1.75rem; }
+
+        .edit-card {
+            background: #fff; border: 1px solid #e8e8e4;
+            border-radius: 16px; padding: 1.75rem 2rem;
+        }
+        .edit-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 1.25rem; }
+
+        .form-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1rem; margin-bottom: 1rem;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label {
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.06em; color: #888;
+        }
+        .form-group input {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem; color: #1a1a1a;
+            border: 1px solid #e8e8e4; border-radius: 8px;
+            padding: 0.6rem 0.85rem; outline: none;
+            transition: border-color 0.15s;
+            background: #fafaf8;
+        }
+        .form-group input:focus { border-color: #1a1a1a; background: #fff; }
+
+        .form-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+        .btn {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem; font-weight: 500;
+            padding: 0.6rem 1.25rem; border-radius: 8px;
+            cursor: pointer; transition: opacity 0.15s;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+        .btn:hover { opacity: 0.8; }
+        .btn-primary { background: #1a1a1a; color: #fff; border: none; }
+        .btn-secondary { background: #fff; color: #1a1a1a; border: 1px solid #e0e0da; }
+
+        .alert {
+            padding: 0.75rem 1rem; border-radius: 8px;
+            font-size: 0.85rem; margin-bottom: 1rem; display: none;
+        }
+        .alert-success { background: #f0faf0; color: #2d7a2d; border: 1px solid #c3e6c3; }
+        .alert-error { background: #fff0f0; color: #a32020; border: 1px solid #f0c0c0; }
+
+        @media (max-width: 560px) {
+            .info-grid, .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: auto; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <span class="nav-brand">Mi App</span>
+        <div class="nav-right">
+            <span class="role-badge" id="role-badge"></span>
+            <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </nav>
+
+    <div class="main">
+        <div class="page-header">
+            <h1>Mi perfil</h1>
+            <button class="back-btn" onclick="window.location.href='/dashboard'">← Volver al dashboard</button>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="avatar" id="avatar"></div>
+                <div class="profile-header-info">
+                    <h2 id="profile-name">—</h2>
+                    <p id="profile-email">—</p>
+                    <span class="pill" id="profile-role">—</span>
+                </div>
+            </div>
+            <div class="profile-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Teléfono</label>
+                        <span id="info-phone">—</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Fecha de nacimiento</label>
+                        <span id="info-birthdate">—</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Edad</label>
+                        <span id="info-age">—</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Dirección</label>
+                        <span id="info-address">—</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Foto de perfil (URL)</label>
+                        <span id="info-url" style="word-break:break-all; font-size:0.8rem; color:#888;">—</span>
+                    </div>
+                    <div class="info-item">
+                        <label>ID de cuenta</label>
+                        <span class="mono" id="info-id">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-card">
+            <h3>Editar información</h3>
+
+            <div class="alert alert-success" id="alert-success">✓ Datos actualizados correctamente.</div>
+            <div class="alert alert-error" id="alert-error"></div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="input-name" placeholder="Tu nombre" />
+                </div>
+                <div class="form-group">
+                    <label>Apellido</label>
+                    <input type="text" id="input-lastName" placeholder="Tu apellido" />
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" id="input-phone" placeholder="Ej: 987654321" />
+                </div>
+                <div class="form-group">
+                    <label>Fecha de nacimiento</label>
+                    <input type="date" id="input-birthdate" />
+                </div>
+                <div class="form-group full">
+                    <label>Dirección</label>
+                    <input type="text" id="input-address" placeholder="Tu dirección" />
+                </div>
+                <div class="form-group full">
+                    <label>URL foto de perfil</label>
+                    <input type="url" id="input-url" placeholder="https://..." />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary" onclick="guardar()">Guardar cambios</button>
+                <button class="btn btn-secondary" onclick="cancelar()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const token = sessionStorage.getItem('token');
+    if (!token) window.location.href = '/signin';
+
+    let payload;
+    try {
+        payload = JSON.parse(atob(token.split('.')[1]));
+    } catch {
+        sessionStorage.removeItem('token');
+        window.location.href = '/signin';
+    }
+
+    if (payload.exp && Date.now() / 1000 > payload.exp) {
+        sessionStorage.removeItem('token');
+        window.location.href = '/signin';
+    }
+
+    const isAdmin = payload.roles && payload.roles.includes('admin');
+    const badge = document.getElementById('role-badge');
+    badge.textContent = isAdmin ? 'Admin' : 'Usuario';
+    if (isAdmin) badge.classList.add('admin');
+
+    let userData = {};
+
+    async function handleResponse(res) {
+        if (res.status === 401) {
+            sessionStorage.removeItem('token');
+            window.location.href = '/signin';
+            return null;
+        }
+        if (res.status === 403) {
+            window.location.href = '/403';
+            return null;
+        }
+        return res.json();
+    }
+
+    function calcularEdad(fechaNac) {
+        if (!fechaNac) return '—';
+        const hoy = new Date();
+        const nac = new Date(fechaNac);
+        let edad = hoy.getFullYear() - nac.getFullYear();
+        const m = hoy.getMonth() - nac.getMonth();
+        if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+        return edad + ' años';
+    }
+
+    async function loadMe() {
+        const res = await fetch('/api/users/me', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const u = await handleResponse(res);
+        if (!u) return;
+
+        userData = u;
+
+        const name = ((u.name || '') + ' ' + (u.lastName || '')).trim();
+
+        document.getElementById('profile-name').textContent = name || u.email;
+        document.getElementById('profile-email').textContent = u.email;
+        document.getElementById('profile-role').textContent = (u.roles || []).join(', ');
+
+        const av = document.getElementById('avatar');
+        if (u.url_profile) {
+            av.innerHTML = `<img src="${u.url_profile}" onerror="this.parentElement.textContent='${((u.name||'?')[0]+(u.lastName||'?')[0]).toUpperCase()}'" />`;
+        } else {
+            av.textContent = ((u.name || '?')[0] + (u.lastName || '?')[0]).toUpperCase();
+        }
+
+        document.getElementById('info-phone').textContent = u.phoneNumber || '—';
+        document.getElementById('info-birthdate').textContent = u.birthdate
+            ? new Date(u.birthdate).toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' })
+            : '—';
+        document.getElementById('info-age').textContent = calcularEdad(u.birthdate);
+        document.getElementById('info-address').textContent = u.address || '—';
+        document.getElementById('info-url').textContent = u.url_profile || '—';
+        document.getElementById('info-id').textContent = u.id;
+
+        document.getElementById('input-name').value = u.name || '';
+        document.getElementById('input-lastName').value = u.lastName || '';
+        document.getElementById('input-phone').value = u.phoneNumber || '';
+        document.getElementById('input-address').value = u.address || '';
+        document.getElementById('input-url').value = u.url_profile || '';
+        if (u.birthdate) {
+            document.getElementById('input-birthdate').value = u.birthdate.substring(0, 10);
+        }
+    }
+
+    async function guardar() {
+        ocultarAlertas();
+
+        const body = {
+            name: document.getElementById('input-name').value.trim(),
+            lastName: document.getElementById('input-lastName').value.trim(),
+            phoneNumber: document.getElementById('input-phone').value.trim(),
+            address: document.getElementById('input-address').value.trim(),
+            url_profile: document.getElementById('input-url').value.trim(),
+            birthdate: document.getElementById('input-birthdate').value || undefined,
+        };
+
+        try {
+            const res = await fetch(`/api/users/${userData.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (res.status === 401) {
+                sessionStorage.removeItem('token');
+                window.location.href = '/signin';
+                return;
+            }
+
+            if (!res.ok) {
+                const err = await res.json();
+                mostrarError(err.message || 'Error al actualizar los datos.');
+                return;
+            }
+
+            mostrarExito();
+            await loadMe();
+        } catch (e) {
+            mostrarError('Error de conexión. Intenta nuevamente.');
+        }
+    }
+
+    function cancelar() {
+        document.getElementById('input-name').value = userData.name || '';
+        document.getElementById('input-lastName').value = userData.lastName || '';
+        document.getElementById('input-phone').value = userData.phoneNumber || '';
+        document.getElementById('input-address').value = userData.address || '';
+        document.getElementById('input-url').value = userData.url_profile || '';
+        document.getElementById('input-birthdate').value = userData.birthdate ? userData.birthdate.substring(0, 10) : '';
+        ocultarAlertas();
+    }
+
+    function mostrarExito() {
+        document.getElementById('alert-success').style.display = 'block';
+        setTimeout(() => { document.getElementById('alert-success').style.display = 'none'; }, 3000);
+    }
+
+    function mostrarError(msg) {
+        const el = document.getElementById('alert-error');
+        el.textContent = '✗ ' + msg;
+        el.style.display = 'block';
+    }
+
+    function ocultarAlertas() {
+        document.getElementById('alert-success').style.display = 'none';
+        document.getElementById('alert-error').style.display = 'none';
+    }
+
+    function logout() {
+        sessionStorage.removeItem('token');
+        window.location.href = '/signin';
+    }
+
+    loadMe();
+</script>
+</body>
+</html>

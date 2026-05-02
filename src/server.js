@@ -49,23 +49,16 @@ app.get('/', (req, res) => res.redirect('/signin'));
 app.get('/signin', (req, res) => res.render('signin'));
 app.get('/signup', (req, res) => res.render('signup'));
 app.get('/dashboard', (req, res) => res.render('dashboard'));
+app.get('/profile', (req, res) => res.render('profile'));
 
 // Página 403
 app.get('/403', (req, res) => {
-    res.status(403).send(`
-        <h1>403 - Prohibido</h1>
-        <p>No tienes permisos para acceder a esta página</p>
-        <a href="/signin">Volver al login</a>
-    `);
+    res.status(403).render('403');
 });
 
-// Página 404 (IMPORTANTE: siempre al final)
+// Página 404 (siempre al final)
 app.use((req, res) => {
-    res.status(404).send(`
-        <h1>404 - Página no encontrada</h1>
-        <p>La ruta no existe</p>
-        <a href="/signin">Ir al inicio</a>
-    `);
+    res.status(404).render('404');
 });
 
 // =======================
