@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; }
+        nav {
+            background: #fff; border-bottom: 1px solid #e8e8e4;
+            padding: 0 2rem; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-brand { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; letter-spacing: -0.01em; }
+        .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+        .role-badge {
+            font-size: 0.75rem; font-weight: 500;
+            padding: 0.25rem 0.65rem; border-radius: 20px;
+            background: #f0f0eb; color: #555; border: 1px solid #e0e0da;
+        }
+        .role-badge.admin { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+        .logout-btn {
+            font-size: 0.82rem; font-weight: 500; color: #888;
+            background: none; border: none; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: color 0.15s;
+        }
+        .logout-btn:hover { color: #1a1a1a; }
+        .main { max-width: 900px; margin: 0 auto; padding: 2.5rem 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; }
+        .page-header p { color: #888; font-size: 0.875rem; margin-top: 0.25rem; }
+
+        /* Perfil */
+        .profile-card {
+            background: #fff; border: 1px solid #e8e8e4;
+            border-radius: 14px; padding: 2rem;
+        }
+        .profile-top { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem; }
+        .avatar {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: #1a1a1a; color: #fff; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 600; overflow: hidden;
+        }
+        .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .profile-info h2 { font-size: 1rem; font-weight: 600; }
+        .profile-info p { font-size: 0.85rem; color: #888; margin-top: 0.15rem; }
+        .divider { border: none; border-top: 1px solid #f0f0eb; margin: 0 0 1.5rem; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.25rem; }
+        .info-item label {
+            font-size: 0.72rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.07em; color: #aaa; display: block; margin-bottom: 0.3rem;
+        }
+        .info-item span { font-size: 0.875rem; color: #1a1a1a; }
+
+        /* Tabla */
+        .table-card {
+            background: #fff; border: 1px solid #e8e8e4;
+            border-radius: 14px; overflow: hidden;
+        }
+        .table-top {
+            padding: 1.25rem 1.75rem; border-bottom: 1px solid #f0f0eb;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .table-top h2 { font-size: 0.95rem; font-weight: 600; }
+        .user-count { font-size: 0.78rem; color: #aaa; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left; padding: 0.75rem 1.75rem;
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.07em; color: #aaa; background: #fafaf8;
+            border-bottom: 1px solid #f0f0eb;
+        }
+        td { padding: 0.9rem 1.75rem; font-size: 0.875rem; border-bottom: 1px solid #f7f7f4; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fafaf8; }
+        .email-cell { color: #888; }
+        .pill {
+            display: inline-block; padding: 0.2rem 0.6rem;
+            border-radius: 20px; font-size: 0.72rem; font-weight: 500;
+        }
+        .pill-admin { background: #1a1a1a; color: #fff; }
+        .pill-user { background: #f0f0eb; color: #555; border: 1px solid #e0e0da; }
+        .table-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: #e8e8e4; color: #555;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 600; overflow: hidden; vertical-align: middle;
+            margin-right: 0.5rem;
+        }
+        .table-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    </style>
+</head>
+<body>
+    <nav>
+        <span class="nav-brand">Mi App</span>
+        <div class="nav-right">
+            <span class="role-badge" id="role-badge"></span>
+            <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </nav>
+
+    <div class="main">
+        <div class="page-header">
+            <h1 id="page-title"></h1>
+            <p id="page-sub"></p>
+        </div>
+
+        <!-- Panel usuario -->
+        <div id="panel-user" style="display:none;">
+            <div class="profile-card">
+                <div class="profile-top">
+                    <div class="avatar" id="avatar"></div>
+                    <div class="profile-info">
+                        <h2 id="profile-name"></h2>
+                        <p id="profile-email"></p>
+                    </div>
+                </div>
+                <hr class="divider">
+                <div class="info-grid">
+                    <div class="info-item"><label>Rol</label><span id="profile-role"></span></div>
+                    <div class="info-item"><label>Teléfono</label><span id="profile-phone"></span></div>
+                    <div class="info-item"><label>Dirección</label><span id="profile-address"></span></div>
+                    <div class="info-item"><label>ID de cuenta</label><span id="profile-id" style="font-size:0.75rem;color:#aaa;"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel admin -->
+        <div id="panel-admin" style="display:none;">
+            <div class="table-card">
+                <div class="table-top">
+                    <h2>Usuarios</h2>
+                    <span class="user-count" id="user-count"></span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const token = sessionStorage.getItem('token');
+
+    if (!token) window.location.href = '/signin';
+
+    let payload;
+    try {
+        payload = JSON.parse(atob(token.split('.')[1]));
+    } catch {
+        sessionStorage.removeItem('token');
+        window.location.href = '/signin';
+    }
+
+    const isAdmin = payload.roles.includes('admin');
+
+    const badge = document.getElementById('role-badge');
+    badge.textContent = isAdmin ? 'Admin' : 'Usuario';
+    if (isAdmin) badge.classList.add('admin');
+
+    if (isAdmin) {
+        document.getElementById('panel-admin').style.display = 'block';
+        document.getElementById('page-title').textContent = 'Administración';
+        document.getElementById('page-sub').textContent = 'Gestión de usuarios del sistema';
+        loadUsers();
+    } else {
+        document.getElementById('panel-user').style.display = 'block';
+        document.getElementById('page-title').textContent = 'Mi perfil';
+        document.getElementById('page-sub').textContent = 'Información de tu cuenta';
+        loadMe();
+    }
+
+    async function handleResponse(res) {
+        if (res.status === 401) {
+            sessionStorage.removeItem('token');
+            window.location.href = '/signin';
+            return null;
+        }
+
+        if (res.status === 403) {
+            window.location.href = '/403';
+            return null;
+        }
+
+        return res.json();
+    }
+
+    async function loadMe() {
+        const res = await fetch('/api/users/me', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        const u = await handleResponse(res);
+        if (!u) return;
+
+        const name = ((u.name || '') + ' ' + (u.lastName || '')).trim();
+
+        document.getElementById('profile-name').textContent = name || u.email;
+        document.getElementById('profile-email').textContent = u.email;
+        document.getElementById('profile-role').textContent = u.roles.join(', ');
+        document.getElementById('profile-phone').textContent = u.phoneNumber || '—';
+        document.getElementById('profile-address').textContent = u.address || '—';
+        document.getElementById('profile-id').textContent = u.id;
+
+        const av = document.getElementById('avatar');
+
+        if (u.url_profile) {
+            av.innerHTML = `<img src="${u.url_profile}" onerror="this.parentElement.textContent='??'" />`;
+        } else {
+            av.textContent = ((u.name || '?')[0] + (u.lastName || '?')[0]).toUpperCase();
+        }
+    }
+
+    async function loadUsers() {
+        const res = await fetch('/api/users', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        const users = await handleResponse(res);
+        if (!users) return;
+
+        document.getElementById('user-count').textContent = users.length + ' registrados';
+
+        document.getElementById('users-body').innerHTML = users.map(u => {
+            const initials = ((u.name || '?')[0] + (u.lastName || '?')[0]).toUpperCase();
+
+            const avatarHtml = u.url_profile
+                ? `<span class="table-avatar"><img src="${u.url_profile}" onerror="this.parentElement.textContent='${initials}'" /></span>`
+                : `<span class="table-avatar">${initials}</span>`;
+
+            return `<tr>
+                <td>${avatarHtml}${(u.name || '')} ${(u.lastName || '')}</td>
+                <td class="email-cell">${u.email}</td>
+                <td>${u.roles.map(r => `<span class="pill ${(r.name || r) === 'admin' ? 'pill-admin' : 'pill-user'}">${r.name || r}</span>`).join(' ')}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    function logout() {
+        sessionStorage.removeItem('token');
+        window.location.href = '/signin';
+    }
+</script>
+</body>
+</html>

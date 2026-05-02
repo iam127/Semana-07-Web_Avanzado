@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .container { width: 100%; max-width: 520px; }
+        .logo { text-align: center; margin-bottom: 2rem; }
+        .logo h1 { font-size: 1.25rem; font-weight: 600; color: #1a1a1a; letter-spacing: -0.02em; }
+        .logo p { color: #888; font-size: 0.875rem; margin-top: 0.25rem; }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e8e8e4;
+        }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .field { margin-bottom: 0; }
+        .field.full { grid-column: 1 / -1; }
+        .field + .field { margin-top: 0; }
+        .field label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.4rem;
+        }
+        .field input {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 1px solid #e0e0da;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            color: #1a1a1a;
+            background: #fafaf8;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .field input:focus {
+            border-color: #1a1a1a;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(26,26,26,0.06);
+        }
+        .hint { font-size: 0.75rem; color: #aaa; margin-top: 0.35rem; line-height: 1.4; }
+        .divider { border: none; border-top: 1px solid #f0f0eb; margin: 1.25rem 0; }
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+            margin-top: 1.25rem;
+        }
+        .btn:hover { background: #333; }
+        .error-msg {
+            font-size: 0.82rem; color: #c0392b;
+            background: #fdf2f2; border: 1px solid #f5c6c6;
+            border-radius: 7px; padding: 0.6rem 0.9rem;
+            margin-bottom: 1rem; display: none;
+        }
+        .success-msg {
+            font-size: 0.82rem; color: #1a7a4a;
+            background: #f0faf4; border: 1px solid #b7dfc8;
+            border-radius: 7px; padding: 0.6rem 0.9rem;
+            margin-bottom: 1rem; display: none;
+        }
+        .footer { text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: #888; }
+        .footer a { color: #1a1a1a; text-decoration: none; font-weight: 500; }
+        .footer a:hover { text-decoration: underline; }
+        .section-label {
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.08em; color: #bbb; margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Crear cuenta</h1>
+            <p>Completa el formulario para registrarte</p>
+        </div>
+        <div class="card">
+            <div id="error-msg" class="error-msg"></div>
+            <div id="success-msg" class="success-msg"></div>
+            <p class="section-label">Información personal</p>
+            <div class="grid">
+                <div class="field">
+                    <label>Nombre</label>
+                    <input id="name" type="text" placeholder="Juan" />
+                </div>
+                <div class="field">
+                    <label>Apellido</label>
+                    <input id="lastName" type="text" placeholder="Pérez" />
+                </div>
+                <div class="field">
+                    <label>Teléfono</label>
+                    <input id="phoneNumber" type="text" placeholder="78901234" />
+                </div>
+                <div class="field">
+                    <label>Fecha de nacimiento</label>
+                    <input id="birthdate" type="date" />
+                </div>
+                <div class="field full">
+                    <label>Dirección</label>
+                    <input id="address" type="text" placeholder="Calle, ciudad" />
+                </div>
+            </div>
+            <hr class="divider">
+            <p class="section-label">Acceso</p>
+            <div class="grid">
+                <div class="field full">
+                    <label>Correo electrónico</label>
+                    <input id="email" type="email" placeholder="correo@ejemplo.com" />
+                </div>
+                <div class="field full">
+                    <label>Contraseña</label>
+                    <input id="password" type="password" placeholder="••••••••" />
+                    <p class="hint">Mínimo 8 caracteres, 1 mayúscula, 1 número y 1 especial (#$%&*@)</p>
+                </div>
+                <div class="field full">
+                    <label>URL de perfil <span style="color:#bbb; font-weight:400;">(opcional)</span></label>
+                    <input id="url_profile" type="text" placeholder="https://..." />
+                </div>
+            </div>
+            <button class="btn" onclick="signUp()">Crear cuenta</button>
+        </div>
+        <div class="footer">¿Ya tienes cuenta? <a href="/signin">Inicia sesión</a></div>
+    </div>
+    <script>
+        async function signUp() {
+            const body = {
+                name: document.getElementById('name').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                birthdate: document.getElementById('birthdate').value,
+                password: document.getElementById('password').value,
+                address: document.getElementById('address').value,
+                url_profile: document.getElementById('url_profile').value,
+                roles: ['user']
+            };
+            const res = await fetch('/api/auth/signUp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                const err = document.getElementById('error-msg');
+                err.textContent = data.message;
+                err.style.display = 'block';
+                return;
+            }
+            const ok = document.getElementById('success-msg');
+            ok.textContent = 'Cuenta creada exitosamente. Redirigiendo...';
+            ok.style.display = 'block';
+            setTimeout(() => window.location.href = '/signin', 1500);
+        }
+    </script>
+</body>
+</html>
